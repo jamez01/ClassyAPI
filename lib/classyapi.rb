@@ -34,13 +34,13 @@ module ClassyAPI
       obj.extend(Deeper)
       (obj.deeper.methods_without_parameters - Object.methods).each { |meth|
         get "/#{meth.to_s}/?" do
-          @@options[:render].call("#{obj.send(meth)}")
+          @@options[:render].call(obj.send(meth))
         end
       }
       obj.deeper.methods_with_parameters.each { |meth,parms|
         next if Object.respond_to?(meth)
         get "/#{meth.to_s}/:#{parms.map { |x| x = x[1] }.join("/") }/?" do
-          obj.send(meth.to_s,params.map{|x| x=x[1]}).to_json
+          @@options[:render].call(obj.send(meth.to_s,params.map{ |x| x=x[1] } ))
         end
       }
 
