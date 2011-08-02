@@ -27,9 +27,11 @@ module ClassyAPI
     @object_store = Array.new
     enable :static, :session
     set :root, File.dirname(__FILE__)
+    
     get '/' do
       "Welcome to ClassyAPI"
     end
+    
     def self.export(obj)
       obj.extend(Deeper)
       (obj.deeper.methods_without_parameters - Object.methods).each { |meth|
