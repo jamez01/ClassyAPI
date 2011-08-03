@@ -23,6 +23,9 @@
   require 'yaml'
 module ClassyAPI
   class API < Sinatra::Base
+    before do
+
+    end
     @@options = {:base_path => '/', :render => lambda{|out| out.to_json } }
     @object_store = Array.new
     enable :static, :session
@@ -41,8 +44,17 @@ module ClassyAPI
       }
       obj.deeper.methods_with_parameters.each { |meth,parms|
         next if Object.respond_to?(meth)
-        get "/#{meth.to_s}/:#{parms.map { |x| x = x[1] }.join("/") }/?" do
-          @@options[:render].call(obj.send(meth.to_s,params.map{ |x| x=x[1] } ))
+        get "/#{meth.to_s}/#{parms.map { |x| x = ":#{x[1].to_s}" }.join("/") }/?" do
+          @@options[:render].call(obj.send(meth,*params.values.map{ |x| x=convert(x) } ))
+          #@@options[:render].call("#{obj}.send(#{meth.to_s},*#{params.values} )")
+        end
+        put "/#{meth.to_s}/?" do
+          parms=obj.deeper.methods[meth].map {|x| x=convert(params[x[1]]) if params.key? x[1].to_s }
+          @@options[:render].call(obj.send(meth,*parms))
+        end
+        post "/#{meth.to_s}/?" do
+          parms=obj.deeper.methods[meth].map {|x| x=convert(params[x[1]]) if params.key? x[1].to_s }
+          @@options[:render].call(obj.send(meth,*parms))
         end
       }
 
@@ -57,6 +69,12 @@ module ClassyAPI
     end
 
     helpers do
+      def convert(string)
+        return string if string.class != String
+        return string.to_i if string =~ /^-?\d*$/
+        return string.to_f if string =~ /^-?\d*\.\d*$/
+        return string
+      end
       def render_status(code, reason)
         status code
         @@options[:render].call({
