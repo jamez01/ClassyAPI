@@ -10,7 +10,7 @@ class MyStocks
   end
 
   def buy_stock(stock_symbol,ammount)
-    { :symbol => stock_symbol, :ammount => ammount }
+    { :symbol => stock_symbol, :amount => ammount }
   end
 
 end
@@ -37,17 +37,17 @@ describe "Classyapi" do
   end
 
   it "should take posts with multiple paramaters to /buy_stock" do
-    post '/buy_stock', {:stock_symbol => "nyc", :ammount=>"100"}
+    post '/buy_stock', {:stock_symbol => "nyc", :amount=>"100"}
     last_response.should be_ok
-    last_response.body.should == {:symbol => "nyc", :ammount=>100}.to_json
+    last_response.body.should == {:symbol => "nyc", :amount=>100}.to_json
   end
   it "should respond to /buy_stock/nyc/100" do
     get '/buy_stock/nyc/100'
     last_response.should be_ok
-    last_response.body.should == {:symbol => "nyc", :ammount=>100}.to_json
+    last_response.body.should == {:symbol => "nyc", :amount=>100}.to_json
   end
   it "should 404 on /whatfile" do
     get '/whatfile'
-    last_response.status.should == 404
+    last_response.body.should == {"status" => 404, "reason" => "Not found"}.to_json
   end
 end

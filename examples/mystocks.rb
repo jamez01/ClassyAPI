@@ -15,7 +15,7 @@ class MyStocks
   end
 
   def buy_stock(stock_symbol,ammount)
-    { :symbol => stock_symbol, :ammount => ammount }
+    { :symbol => stock_symbol, :amount => ammount }
   end
 
 end
