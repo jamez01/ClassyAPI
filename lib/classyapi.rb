@@ -27,11 +27,11 @@ module ClassyAPI
     @object_store = Array.new
     enable :static, :session
     set :root, File.dirname(__FILE__)
-    
+
     get '/' do
       "Welcome to ClassyAPI"
     end
-    
+
     def self.export(obj)
       obj.extend(Deeper)
       (obj.deeper.methods_without_parameters - Object.methods).each { |meth|
@@ -47,22 +47,22 @@ module ClassyAPI
       }
 
     end
-    
+
     not_found do
-      json_status 404, "Not found"
+      render_status 404, "Not found"
     end
 
     error do
-      json_status 500, env['sinatra.error'].message
+      render_status 500, env['sinatra.error'].message
     end
-    
+
     helpers do
-      def json_status(code, reason)
+      def render_status(code, reason)
         status code
-        {
+        @@options[:render].call({
           :status => code,
           :reason => reason
-        }.to_json
+        })
       end
     end
   end
