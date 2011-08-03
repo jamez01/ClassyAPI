@@ -3,17 +3,18 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 class MyStocks
   attr_reader :my_brokerage_account
   def initialize
-    @my_brokerage_account = 32423423
+    @my_brokerage_account = "32423423"
   end
   def list_stock(stock_symbol)
     { :symbol => stock_symbol, :price => 31.39 }
   end
 
-  def buy_stock(stock_symbol,ammount)
-    { :symbol => stock_symbol, :amount => ammount }
+  def buy_stock(stock_symbol,amount)
+    { :symbol => stock_symbol, :amount => amount }
   end
 
 end
+
 
 @mystocks = MyStocks.new
 ClassyAPI::API.export(@mystocks)
@@ -26,7 +27,7 @@ describe "Classyapi" do
   it "should respond to /my_brokerage_account" do
     get '/my_brokerage_account'
     last_response.should be_ok
-    last_response.body.should == "32423423"
+    last_response.body.should == "32423423".to_json
   end
 
   it "should take posts to /list_stock" do
